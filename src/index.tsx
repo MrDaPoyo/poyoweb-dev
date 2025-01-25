@@ -1,27 +1,15 @@
 import { Elysia } from 'elysia';
 import { html, Html } from '@elysiajs/html';
-import * as elements from 'typed-html';
+
+import BaseHtml from './components/base';
+
 // Application
 const app = new Elysia();
 
 app.use(html());
 
-const BaseHtml = ({ children }: elements.Children) => `
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>The PoyoWeb!</title>
-    </head>
-    <body>
-      ${children}
-    </body>
-  </html>
-`
-
-app.get('/', ({ html }) => {
-  return html(
+app.get('/', () => {
+  return (
   <BaseHtml>
     <h1>Hello, PoyoWeb!</h1>
   </BaseHtml>
