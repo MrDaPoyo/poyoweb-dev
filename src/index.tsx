@@ -2,6 +2,7 @@ import { Elysia } from 'elysia';
 import { html, Html } from '@elysiajs/html';
 
 import BaseHtml from './components/base';
+import IndexHtml from './components/index';
 
 // Application
 const app = new Elysia();
@@ -11,7 +12,7 @@ app.use(html());
 app.get('/', () => {
   return (
   <BaseHtml>
-    <h1>Hello, PoyoWeb!</h1>
+    <IndexHtml />
   </BaseHtml>
   );
 });
