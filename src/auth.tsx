@@ -50,8 +50,9 @@ export class AuthModule {
                     }
                 })
                 .post('/login', async ({ body }) => {
-                    const { email, password } = body as User;
-                    const result = await db.select().from(usersTable).where({ email, password });
+                    const { username, password } = body as User;
+                    const hashedPassword = await hash(password, 10);
+                    const result = await db.select().from(usersTable).where({ username, hashedPassword });
                     if (result.length === 0) {
                         return {
                             success: false,
