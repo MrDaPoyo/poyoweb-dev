@@ -6,7 +6,6 @@ import { AuthModule } from './auth';
 
 import BaseHtml from './components/base';
 import IndexHtml from './components/index';
-import AuthHtml from './components/auth';
 
 export const auth = new AuthModule();
 
@@ -14,6 +13,7 @@ export const auth = new AuthModule();
 const app = new Elysia();
 
 app.use(html());
+app.use(auth.setup);
 
 app.get('/', () => {
   return (
@@ -21,10 +21,6 @@ app.get('/', () => {
      <IndexHtml />
   </BaseHtml>
   );
-});
-
-app.get('/auth', () => {
-  app.use(auth.setup);
 });
 
 app.listen(3000);
