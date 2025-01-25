@@ -1,7 +1,7 @@
 import { Elysia } from 'elysia';
 import { html, Html } from '@elysiajs/html';
 
-import { db } from './db';
+import { db, setupDB } from './db';
 import { AuthModule } from './auth';
 
 import BaseHtml from './components/base';
@@ -22,6 +22,8 @@ app.get('/', () => {
   </BaseHtml>
   );
 });
+
+setupDB();
 
 app.listen(3000);
 console.log('PoyoWeb Server running at http://localhost:3000/');

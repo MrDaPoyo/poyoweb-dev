@@ -2,6 +2,7 @@ import { Elysia } from 'elysia';
 import { db } from './db';
 import { usersTable } from './db/schema';
 import { Html } from '@elysiajs/html';
+import { compare, hash } from 'bcryptjs';
 
 import BaseHtml from './components/base';
 import AuthHtml from './components/auth';
@@ -29,10 +30,11 @@ export class AuthModule {
                 .post('/register', async ({ body }) => {
                     const { username, email, password } = body as User;
                     try {
+                        const hashedPassword = await hash(password, 10);
                         const result = await db.insert(usersTable).values({
                             username,
                             email,
-                            password,
+                            password: hashedPassword,
                             tier: 0,
                             created_at: new Date().toISOString()
                         }).run();
