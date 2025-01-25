@@ -8,6 +8,10 @@
   "dependencies": {
     "-": "^0.0.1",
     "@elysiajs/html": "^1.2.0",
+    "@libsql/client": "^0.14.0",
+    "dotenv": "^16.4.7",
+    "drizzle-kit": "^0.30.2",
+    "drizzle-orm": "^0.38.4",
     "elysia": "latest",
     "typed-html": "^3.0.1"
   },

@@ -1,9 +1,14 @@
 import { Elysia } from 'elysia';
 import { html, Html } from '@elysiajs/html';
 
+import { db } from './db';
+import { AuthModule } from './auth';
+
 import BaseHtml from './components/base';
 import IndexHtml from './components/index';
 import AuthHtml from './components/auth';
+
+export const auth = new AuthModule();
 
 // Application
 const app = new Elysia();
@@ -19,11 +24,7 @@ app.get('/', () => {
 });
 
 app.get('/auth', () => {
-  return (
-  <BaseHtml>
-    <AuthHtml />
-  </BaseHtml>
-  )
+  app.use(auth.setup);
 });
 
 app.listen(3000);
