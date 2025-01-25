@@ -1,9 +1,11 @@
 import { Elysia } from "elysia";
+import { html, Html } from '@elysiajs/html'
 
 const app = new Elysia();
+app.use(html());
 
 app.get("/", () => {
-  return "Hello, World!";
+  return `<Header>Hi, I'm PoyoWeb</Header>`;
 });
 
 app.listen(3000);
