@@ -2,7 +2,7 @@ import { Elysia } from 'elysia';
 import { db } from './db';
 import { usersTable } from './db/schema';
 import { Html } from '@elysiajs/html';
-import { compare, hash } from 'bcryptjs';
+import { hash, compare } from "bun"
 
 import BaseHtml from './components/base';
 import AuthHtml from './components/auth';
@@ -51,7 +51,7 @@ export class AuthModule {
                 })
                 .post('/login', async ({ body }) => {
                     const { email, password } = body as User;
-                    const result = await db.select().from(usersTable).where({ email, password }).run();
+                    const result = await db.select().from(usersTable).where({ email, password });
                     if (result.length === 0) {
                         return {
                             success: false,
