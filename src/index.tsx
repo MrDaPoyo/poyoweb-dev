@@ -25,7 +25,6 @@ const authMiddleware = async (jwt: any, context: any, next: any) => {
   const token = cookie?.auth;
   if (token) {
     try {
-      // Verify the token (replace 'your-secret-key' with your actual key)
       const decoded = jwt.verify(token);
       context.user = decoded; // Attach user data to the context
       return true; // Token is valid
