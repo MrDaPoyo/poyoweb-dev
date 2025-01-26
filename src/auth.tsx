@@ -33,37 +33,39 @@ export class AuthModule {
                     name: 'jwt',
                     secret: String(process.env.AUTH_SECRET).toString(),
                 })
-            )
-                .post("/register", async ({ body, jwt, cookie, params }) => {
-                    const { username, password, email, tier } = body as User;
+            ).get("/", () => {
+                return <BaseHtml>
+                    <AuthHtml />
+                </BaseHtml>
+            })
+                .post("/register", async ({ set, body, jwt, cookie: { auth }, params }) => {
+                    const { username, password, email } = body as User;
 
-                    if (!username || !password || !email || !tier) {
+                    if (!username || !password || !email ) {
                         set.status = 400;
                         return { error: "All fields are required." };
                     }
-
+                    var tier = 0;
                     try {
                         const hashedPassword = await hashPassword(password);
                         const createdAt = new Date().toISOString();
 
-                        const result = db.insert(usersTable).values({
+                        const result = await db.insert(usersTable).values({
                             username,
                             password: hashedPassword,
                             email,
                             tier,
                             created_at: createdAt,
                         });
+                        console.log(result);
+                        const userId = result.id as number;
 
-                        const userId = result.lastInsertRowid as number;
-                        const token = await jwt.sign({ userId });
-
-                        cookie.set("authentication", token, {
+                        auth.set({
+                            value: await jwt.sign({ userId }),
                             httpOnly: true,
-                            secure: true,
-                            sameSite: "strict",
-                            path: "/",
-                            maxAge: 60 * 60 * 24, // 1 day
-                        });
+                            maxAge: 7 * 86400,
+                            path: '/profile',
+                        })
 
                         return { message: "User registered successfully." };
                     } catch (error) {
@@ -71,7 +73,7 @@ export class AuthModule {
                         return { error: "Error registering user." };
                     }
                 })
-                .post("/login", async ({ body, set, cookie }) => {
+                .post("/login", async ({ body, set, cookie: { auth } }) => {
                     const { email, password } = body as User;
 
                     if (!email || !password) {
@@ -97,9 +99,10 @@ export class AuthModule {
                             return { error: "Invalid credentials." };
                         }
 
-                        const token = createToken(user.id, user.username);
+                        const token = jwt(user.id);
 
-                        cookie.set("authentication", token, {
+                        auth.set({
+                            value: token,
                             httpOnly: true,
                             secure: true,
                             sameSite: "strict",

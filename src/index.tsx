@@ -23,6 +23,10 @@ app.get('/', () => {
   );
 });
 
+app.get('/auth', () => {
+  app.use(auth.setup);
+});
+
 setupDB();
 
 app.listen(3000);
