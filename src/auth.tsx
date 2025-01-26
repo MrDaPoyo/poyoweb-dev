@@ -60,9 +60,10 @@ export class AuthModule {
                     email,
                     tier,
                     created_at: createdAt,
-                }).run();
-                const userId = result.id as number;
+                }).run() as any;
 
+                const userId = parseInt(result.lastInsertRowid, 10) as number;
+                
                 auth.set({
                     value: await jwt.sign({ userId }),
                     httpOnly: true,
@@ -72,6 +73,7 @@ export class AuthModule {
                 return { message: "User registered successfully." };
                 } catch (error) {
                 set.status = 500;
+                console.warn(error);
                 return { error: "Error registering user." };
                 }
             })
