@@ -32,91 +32,92 @@ export class AuthModule {
     public setup(app: Elysia) {
         return app.group('/auth', (app) =>
             app.use(
-                jwt({
-                    name: 'jwt',
-                    secret: process.env.AUTH_SECRET || 'superdupersecretthatssuperdupersecret1234',
-                })
-            ).get("/", () => {
-                return <BaseHtml>
-                    <AuthHtml />
-                </BaseHtml>
+            jwt({
+                name: 'jwt',
+                secret: process.env.AUTH_SECRET || 'superdupersecretthatssuperdupersecret1234',
             })
-                .post("/register", async ({ set, body, jwt, cookie: { auth }, params }) => {
-                    const { username, password, email } = body as User;
+            )
+            .get("/", () => {
+            return <BaseHtml>
+                <AuthHtml />
+            </BaseHtml>
+            })
+            .post("/register", async ({ set, body, jwt, cookie: { auth }, params }) => {
+                const { username, password, email } = body as User;
 
-                    if (!username || !password || !email) {
-                        set.status = 400;
-                        return { error: "All fields are required." };
-                    }
-                    var tier = 0;
-                    try {
-                        const hashedPassword = await hashPassword(password);
-                        const createdAt = new Date().toISOString();
+                if (!username || !password || !email) {
+                set.status = 400;
+                return { error: "All fields are required." };
+                }
+                var tier = 0;
+                try {
+                const hashedPassword = await hashPassword(password);
+                const createdAt = new Date().toISOString();
 
-                        const result = await db.insert(usersTable).values({
-                            username,
-                            password: hashedPassword,
-                            email,
-                            tier,
-                            created_at: createdAt,
-                        }).run();
-                        const userId = result.id as number;
+                const result = await db.insert(usersTable).values({
+                    username,
+                    password: hashedPassword,
+                    email,
+                    tier,
+                    created_at: createdAt,
+                }).run();
+                const userId = result.id as number;
 
-                        auth.set({
-                            value: await jwt.sign({ userId }),
-                            httpOnly: true,
-                            maxAge: 7 * 86400,
-                        })
-
-                        return { message: "User registered successfully." };
-                    } catch (error) {
-                        set.status = 500;
-                        return { error: "Error registering user." };
-                    }
+                auth.set({
+                    value: await jwt.sign({ userId }),
+                    httpOnly: true,
+                    maxAge: 7 * 86400,
                 })
-                .post("/login", async ({ redirect, body, jwt, set, cookie: { auth } }) => {
-                    const { email, password } = body as User;
 
-                    if (!email || !password) {
-                        set.status = 400;
-                        return { error: "Email and password are required." };
-                    }
+                return { message: "User registered successfully." };
+                } catch (error) {
+                set.status = 500;
+                return { error: "Error registering user." };
+                }
+            })
+            .post("/login", async ({ redirect, body, jwt, set, cookie: { auth } }) => {
+                const { email, password } = body as User;
 
-                    try {
-                        const user = await db
-                            .select()
-                            .from(usersTable)
-                            .where(eq(usersTable.email, email)) // Use the `eq` operator for the condition
-                            .get();
-                        if (!user) {
-                            set.status = 404;
-                            return { error: "User not found." };
-                        }
+                if (!email || !password) {
+                set.status = 400;
+                return { error: "Email and password are required." };
+                }
 
-                        const passwordMatch = await comparePassword(password, await user.password);
-                        if (!passwordMatch) {
-                            set.status = 401;
-                            return { error: "Invalid credentials." };
-                        }
-                        const userId = user.id as number;
-                        const token = await jwt.sign({ userId });
+                try {
+                const user = await db
+                    .select()
+                    .from(usersTable)
+                    .where(eq(usersTable.email, email)) // Use the `eq` operator for the condition
+                    .get();
+                if (!user) {
+                    set.status = 404;
+                    return { error: "User not found." };
+                }
 
-                        auth.set({
-                            value: token,
-                            httpOnly: true,
-                            secure: true,
-                            sameSite: "strict",
-                            path: "/",
-                            maxAge: 60 * 60 * 24, // 1 day
-                        });
+                const passwordMatch = await comparePassword(password, await user.password);
+                if (!passwordMatch) {
+                    set.status = 401;
+                    return { error: "Invalid credentials." };
+                }
+                const userId = user.id as number;
+                const token = await jwt.sign({ userId });
 
-                        return redirect("/");
-                    } catch (error) {
-                        set.status = 500;
-                        console.warn(error);
-                        return { error: "Error logging in user." };
-                    }
-                })
+                auth.set({
+                    value: token,
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "strict",
+                    path: "/",
+                    maxAge: 60 * 60 * 24, // 1 day
+                });
+
+                return redirect("/");
+                } catch (error) {
+                set.status = 500;
+                console.warn(error);
+                return { error: "Error logging in user." };
+                }
+            })
         );
     }
 }
