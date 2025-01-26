@@ -1,5 +1,6 @@
 import Elysia from 'elysia';
 import { db } from './db';
+import { eq } from 'drizzle-orm';
 import { usersTable } from './db/schema';
 import { Html } from '@elysiajs/html';
 import { jwt } from '@elysiajs/jwt'
@@ -15,11 +16,13 @@ interface User {
     tier: number;
 };
 
-const hashPassword = async (password: string) => {
-    return Bun.password.hash(password);
+const hashPassword = (password: string): Promise<string> => {
+    return Bun.password.hash(password, {
+        algorithm: "bcrypt",
+    });
 };
 
-const comparePassword = async (password: string, hash: string) => {
+const comparePassword = (password: string, hash: string): Promise<boolean> => {
     return Bun.password.verify(password, hash);
 };
 
@@ -31,7 +34,7 @@ export class AuthModule {
             app.use(
                 jwt({
                     name: 'jwt',
-                    secret: String(process.env.AUTH_SECRET).toString(),
+                    secret: process.env.AUTH_SECRET || 'superdupersecretthatssuperdupersecret1234',
                 })
             ).get("/", () => {
                 return <BaseHtml>
@@ -41,7 +44,7 @@ export class AuthModule {
                 .post("/register", async ({ set, body, jwt, cookie: { auth }, params }) => {
                     const { username, password, email } = body as User;
 
-                    if (!username || !password || !email ) {
+                    if (!username || !password || !email) {
                         set.status = 400;
                         return { error: "All fields are required." };
                     }
@@ -56,15 +59,13 @@ export class AuthModule {
                             email,
                             tier,
                             created_at: createdAt,
-                        });
-                        console.log(result);
+                        }).run();
                         const userId = result.id as number;
 
                         auth.set({
                             value: await jwt.sign({ userId }),
                             httpOnly: true,
                             maxAge: 7 * 86400,
-                            path: '/profile',
                         })
 
                         return { message: "User registered successfully." };
@@ -73,7 +74,7 @@ export class AuthModule {
                         return { error: "Error registering user." };
                     }
                 })
-                .post("/login", async ({ body, set, cookie: { auth } }) => {
+                .post("/login", async ({ redirect, body, jwt, set, cookie: { auth } }) => {
                     const { email, password } = body as User;
 
                     if (!email || !password) {
@@ -82,24 +83,23 @@ export class AuthModule {
                     }
 
                     try {
-                        const user = db
+                        const user = await db
                             .select()
                             .from(usersTable)
-                            .where(usersTable.email.eq(email))
+                            .where(eq(usersTable.email, email)) // Use the `eq` operator for the condition
                             .get();
-
                         if (!user) {
                             set.status = 404;
                             return { error: "User not found." };
                         }
 
-                        const passwordMatch = await comparePassword(password, user.password);
+                        const passwordMatch = await comparePassword(password, await user.password);
                         if (!passwordMatch) {
                             set.status = 401;
                             return { error: "Invalid credentials." };
                         }
-
-                        const token = jwt(user.id);
+                        const userId = user.id as number;
+                        const token = await jwt.sign({ userId });
 
                         auth.set({
                             value: token,
@@ -110,9 +110,10 @@ export class AuthModule {
                             maxAge: 60 * 60 * 24, // 1 day
                         });
 
-                        return { message: "Login successful." };
+                        return redirect("/");
                     } catch (error) {
                         set.status = 500;
+                        console.warn(error);
                         return { error: "Error logging in user." };
                     }
                 })

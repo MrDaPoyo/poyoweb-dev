@@ -1,6 +1,6 @@
 import { Html, html } from '@elysiajs/html';
 
-const authHtml = ({ user }: { user?: { username: string } }) => ( 
+const authHtml = () => ( 
     <>
         <h1>Authenticate</h1>
         <form method="post" action="/auth/login">
