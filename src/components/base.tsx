@@ -10,6 +10,7 @@ const BaseHtml = ({ children }: elements.Children) => `
     </head>
     <body>
       ${children}
+      <script src="https://unpkg.com/htmx.org@1.9.12/"></script>
     </body>
   </html>
 `

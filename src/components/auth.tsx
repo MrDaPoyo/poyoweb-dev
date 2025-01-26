@@ -11,7 +11,7 @@ const authHtml = ({ user }: { user?: { username: string } }) => (
             <input type="password" id="password" name="password" /><br/>
             <input type="submit" />
         </form>
-        <form method="post" action="/auth/register">
+        <form method="post" action="/auth/register" hx-target="#auth" hx-swap="outerHTML">
             <h2>Register</h2>
             <label for="username">Username</label>
             <input type="text" id="username" name="username" /><br/>
@@ -19,7 +19,7 @@ const authHtml = ({ user }: { user?: { username: string } }) => (
             <input type="password" id="password" name="password" /><br/>
             <label for="email">Email</label>
             <input type="email" id="email" name="email" /><br/>
-            <input type="submit" />
+            <input type="submit"/>
         </form>
     </>
 );
