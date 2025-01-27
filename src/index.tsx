@@ -20,22 +20,20 @@ app.use(jwt({
   secret: process.env.AUTH_SECRET || 'superdupersecretthatssuperdupersecret1234',
 }));
 
-const authMiddleware = async (jwt: any, context: any, next: any) => {
+app.onRequest(async (context: any) => {
   const cookie = context.request.headers.cookie;
   const token = cookie?.auth;
   if (token) {
     try {
-      const decoded = jwt.verify(token);
+      const decoded = context.jwt.verify(token);
       context.user = decoded; // Attach user data to the context
-      return true; // Token is valid
     } catch (err) {
-      return false; // Invalid or expired token
+      context.user = false; // Invalid or expired token
     }
+  } else {
+    context.user = false; // No token provided
   }
-
-  context.user = false; // Mark user as not logged in
-  return false; // No token provided
-};
+});
 
 app.get('/', () => {
   return (
