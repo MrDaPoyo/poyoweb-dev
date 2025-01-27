@@ -7,7 +7,6 @@ import { AuthModule } from './auth';
 
 import BaseHtml from './components/base';
 import IndexHtml from './components/index';
-import { convertIndexToString } from 'drizzle-orm/mysql-core';
 
 export const auth = new AuthModule();
 
@@ -29,13 +28,12 @@ app.use(html())
             app.state('user', null);
           }
           app.state('user', user);
-        } else {
-          app.state('user', null);
         }
       }
     }, (app) =>
-      app.get('/', async ({ store }) => {
-        const user = await getUserDataById(store.user?.userId);
+      app.get('/', async ({ store }: { store: { user?: { userId: number } } }) => {
+        var userId = store.user?.userId as number;
+        const user = await getUserDataById(userId);
         
         return (
           <BaseHtml>
