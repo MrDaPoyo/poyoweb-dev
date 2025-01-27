@@ -1,6 +1,14 @@
 import { Html, html } from '@elysiajs/html';
 
-const indexHtml = ({ user }: { user?: { username: string } }) => ( 
+interface User {
+    username: string;
+}
+
+interface Props {
+    user?: User;
+}
+
+const indexHtml = ({ user }: Props) => ( 
     <>
         <h1>Welcome to the PoyoWeb!</h1>
         <p>This is the PoyoWeb's dev server.</p>
