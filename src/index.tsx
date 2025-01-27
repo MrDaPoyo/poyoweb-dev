@@ -25,6 +25,8 @@ app.use(html())
       async beforeHandle({ set, cookie: { auth }, jwt, error }) {
         if (auth) {
           app.state('user', await jwt.verify(auth.value));
+        } else {
+          app.state('user', null);
         }
       }
     }, (app) =>
