@@ -14,34 +14,34 @@ export const auth = new AuthModule();
 // Application
 const app = new Elysia();
 
-app.use(html());
-app.use(auth.setup);
-app.use(jwt({
-  name: 'jwt',
-  secret: process.env.AUTH_SECRET || 'superdupersecretthatssuperdupersecret1234',
-}));
-
-app.group('/', (app) =>
-  app.guard({
-    async beforeHandle({ set, cookie: { auth }, jwt, error }) {
-      if (auth) {
-        
+app.use(html())
+  .use(auth.setup)
+  .use(jwt({
+    name: 'jwt',
+    secret: process.env.AUTH_SECRET || 'superdupersecretthatssuperdupersecret1234',
+  }))
+  .group('/', (app) =>
+    app.guard({
+      async beforeHandle({ set, cookie: { auth }, jwt, error }) {
+        if (auth) {
+          app.state('user', await jwt.verify(auth.value));
+        }
       }
-    }
-  }, (app) =>
-    app.get('/', ({}) => {
-      return (
-        <BaseHtml>
-          <IndexHtml />
-        </BaseHtml>
-      );
-    }
-    )
-  ));
-
-app.get('/auth', () => {
-  app.use(auth.setup);
-});
+    }, (app) =>
+      app.get('/', ({ store }) => {
+        const user = store.user;
+        
+        return (
+          <BaseHtml>
+            <IndexHtml user={user}/>
+          </BaseHtml>
+        );
+      }
+      )
+    ))
+  .get('/auth', () => {
+    app.use(auth.setup);
+  });
 
 setupDB();
 
