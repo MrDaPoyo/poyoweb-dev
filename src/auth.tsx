@@ -39,8 +39,15 @@ export class AuthModule {
                     })
                 ).guard(
                     {
-                        async beforeHandle({ set, cookie: { auth }, jwt, error }) {
-                            if (auth || !(await jwt.verify(auth))) return error(401);
+                        async beforeHandle({ set, cookie: { auth }, jwt }) {
+                            if (auth) {
+                                const user = await jwt.verify(auth.value);
+                                if (user) {
+                                    set.status = 401;
+                                    return { error: "Already logged in." };
+                                }
+                            }
+                            app.state = { user: null } as any;
                         }
                     },
                     (app) =>
@@ -127,9 +134,11 @@ export class AuthModule {
                                     console.warn(error);
                                     return { error: "Error logging in user." };
                                 }
-                            })
-
-            ));
+                            }))
+                .get("/logout", ({ cookie: { auth }, redirect }) => {
+                    auth.remove();
+                    return redirect("/auth");
+                }));
     }
 }
 
