@@ -2,7 +2,7 @@ import { Elysia } from 'elysia';
 import { jwt } from '@elysiajs/jwt';
 import { html, Html } from '@elysiajs/html';
 
-import { db, setupDB } from './db';
+import { db, setupDB, getUserDataById } from './db';
 import { AuthModule } from './auth';
 
 import BaseHtml from './components/base';
@@ -28,8 +28,8 @@ app.use(html())
         }
       }
     }, (app) =>
-      app.get('/', ({ store }) => {
-        const user = store.user;
+      app.get('/', async ({ store }) => {
+        const user = await getUserDataById(store.user?.userId);
         
         return (
           <BaseHtml>

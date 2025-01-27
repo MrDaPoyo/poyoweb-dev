@@ -26,4 +26,13 @@ async function setupDB() {
     `);
 }
 
-export { db, setupDB };
+async function getUserDataById(id: number) {
+    if (!id) {
+        return null;
+    }
+    return new Promise(async (resolve, reject) => {
+        resolve(await db.get('SELECT * FROM users_table WHERE id = ' + id));
+    });
+}
+
+export { db, setupDB, getUserDataById };
