@@ -7,6 +7,7 @@ import { AuthModule } from './auth';
 
 import BaseHtml from './components/base';
 import IndexHtml from './components/index';
+import { convertIndexToString } from 'drizzle-orm/mysql-core';
 
 export const auth = new AuthModule();
 
@@ -20,28 +21,23 @@ app.use(jwt({
   secret: process.env.AUTH_SECRET || 'superdupersecretthatssuperdupersecret1234',
 }));
 
-app.onRequest(async (context: any) => {
-  const cookie = context.request.headers.cookie;
-  const token = cookie?.auth;
-  if (token) {
-    try {
-      const decoded = context.jwt.verify(token);
-      context.user = decoded; // Attach user data to the context
-    } catch (err) {
-      context.user = false; // Invalid or expired token
+app.group('/', (app) =>
+  app.guard({
+    async beforeHandle({ set, cookie: { auth }, jwt, error }) {
+      if (auth) {
+        
+      }
     }
-  } else {
-    context.user = false; // No token provided
-  }
-});
-
-app.get('/', () => {
-  return (
-  <BaseHtml>
-     <IndexHtml />
-  </BaseHtml>
-  );
-});
+  }, (app) =>
+    app.get('/', ({}) => {
+      return (
+        <BaseHtml>
+          <IndexHtml />
+        </BaseHtml>
+      );
+    }
+    )
+  ));
 
 app.get('/auth', () => {
   app.use(auth.setup);
