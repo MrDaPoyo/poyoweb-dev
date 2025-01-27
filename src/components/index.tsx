@@ -18,7 +18,7 @@ const indexHtml = ({ user }: Props) => (
         {user ? (
             <div>
                 <p>Welcome, {user.username}!</p>
-                <a href="/auth/logout">Logout</a>
+                <span>Access the <a href="/dashboard">Dashboard</a> - <a href="/auth/logout">Logout</a></span>
             </div>
         ) : (
             <p>

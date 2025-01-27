@@ -22,9 +22,13 @@ app.use(html())
   }))
   .group('/', (app) =>
     app.guard({
-      async beforeHandle({ set, cookie: { auth }, jwt, error }) {
+      async beforeHandle({ cookie: { auth }, jwt }) {
         if (auth) {
-          app.state('user', await jwt.verify(auth.value));
+          const user = await jwt.verify(auth.value);
+          if (!user) {
+            app.state('user', null);
+          }
+          app.state('user', user);
         } else {
           app.state('user', null);
         }
