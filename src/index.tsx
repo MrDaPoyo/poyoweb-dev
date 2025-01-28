@@ -4,11 +4,13 @@ import { html, Html } from '@elysiajs/html';
 
 import { db, setupDB, getUserDataById } from './db';
 import { AuthModule } from './auth';
+import { DashboardModule } from './dashboard';
 
 import BaseHtml from './components/base';
 import IndexHtml from './components/index';
 
 export const auth = new AuthModule();
+export const dashboard = new DashboardModule();
 
 // Application
 const app = new Elysia();
@@ -34,18 +36,16 @@ app.use(html())
       app.get('/', async ({ store }: { store: { user?: { userId: number } } }) => {
         var userId = store.user?.userId as number;
         const user = await getUserDataById(userId);
-        
+
         return (
           <BaseHtml>
-            <IndexHtml user={user}/>
+            <IndexHtml user={user} />
           </BaseHtml>
         );
       }
-      )
-    ))
-  .get('/auth', () => {
-    app.use(auth.setup);
-  });
+      ).use(dashboard.setup)
+      .use(auth.setup)
+      ));
 
 setupDB();
 
