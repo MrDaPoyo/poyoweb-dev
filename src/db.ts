@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/libsql';
+import { filesTable } from './db/schema';
+
 const db = drizzle(process.env.DB_FILE_NAME!);
 
 async function setupDB() {
@@ -25,7 +27,7 @@ async function setupDB() {
         )
     `);
 
-    await db.run(`CREATE TABLE IF NOT EXISTS files (
+    await db.run(`CREATE TABLE IF NOT EXISTS files_table (
             id INTEGER PRIMARY KEY AUTOINCREMENT,                           -- Unique ID for each file
             fileName TEXT NOT NULL,                                         -- Name of the file
             fileLocation TEXT NOT NULL,                                     -- Location (path) where the file is stored
@@ -48,4 +50,21 @@ async function getUserDataById(id: number) {
     });
 }
 
-export { db, setupDB, getUserDataById };
+async function insertFile(fileName: string, fileLocation: string, fileFullPath: string, userID: number, fileSize: number) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const result = await db.insert(filesTable).values({
+                fileName,
+                fileLocation,
+                fileFullPath,
+                userID,
+                fileSize
+            });
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+export { db, setupDB, getUserDataById, insertFile };
