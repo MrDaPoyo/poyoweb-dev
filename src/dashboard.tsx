@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
 import { jwt } from '@elysiajs/jwt';
-import { html } from '@elysiajs/html';
+import { html, Html } from '@elysiajs/html';
 
 import { db, setupDB, getUserDataById } from './db';
 
@@ -18,15 +18,28 @@ export class DashboardModule {
                         name: 'jwt',
                         secret: process.env.AUTH_SECRET || 'superdupersecretthatssuperdupersecret1234',
                     })
-                ).get("/", (async ({ store }: { store: { user?: { userId: number } } }) => {
-                    var userId = store.user?.userId as number;
-                    const user = await getUserDataById(userId);
-                    return <BaseHtml>
-                        <DashboardHtml user={user} />
-                    </BaseHtml>
-                })
-            ));
-    }
+                ).guard(
+                    {
+                        async beforeHandle({ set, cookie: { auth }, jwt }) {
+                            if (auth) {
+                                var user = await jwt.verify(auth.value) as any;
+                                app.state = { user } as any;
+                                user = await getUserDataById(await user.userId);
+                                if (!user) {
+                                    set.status = 401;
+                                    return { error: "You need to be logged in. :3c" };
+                                }
+                            }
+                            app.state = { user: null } as any;
+                        }
+                    },
+                    (app) =>
+                        app
+                            .get("/", () => {
+                                var user = app.state(user) as any;
+                                return <BaseHtml>
+                                    <DashboardHtml user={user}/>
+                                </BaseHtml>
+                            })
+    ))};
 }
-
-export const dashboard = new DashboardModule();

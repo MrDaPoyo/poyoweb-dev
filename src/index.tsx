@@ -17,6 +17,7 @@ const app = new Elysia();
 
 app.use(html())
   .use(auth.setup)
+  .use(dashboard.setup)
   .use(jwt({
     name: 'jwt',
     secret: process.env.AUTH_SECRET || 'superdupersecretthatssuperdupersecret1234',
@@ -43,9 +44,7 @@ app.use(html())
           </BaseHtml>
         );
       }
-      ).use(dashboard.setup)
-      .use(auth.setup)
-      ));
+      )));
 
 setupDB();
 
