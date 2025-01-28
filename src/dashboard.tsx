@@ -11,7 +11,7 @@ export class DashboardModule {
     constructor() { }
 
     public setup(app: Elysia) {
-        return app.group('/auth', (app) =>
+        return app.group('/dashboard', (app) =>
             app
                 .use(
                     jwt({
