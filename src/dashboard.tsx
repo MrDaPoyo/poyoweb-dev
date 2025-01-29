@@ -38,7 +38,6 @@ export class DashboardModule {
                             .get("/", async () => {
                                 var user = app.state(user) as any;
                                 var files = await getFilesByUserId(user.id);
-                                console.log(files);
                                 return <BaseHtml>
                                     <DashboardHtml user={user} files={files}/>
                                 </BaseHtml>

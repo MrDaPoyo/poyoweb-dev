@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const usersTable = sqliteTable("users_table", {
@@ -29,3 +30,17 @@ export const filesTable = sqliteTable("files_table", {
   status: text().default("active"),
   statusLastModifiedAt: text().default("CURRENT_TIMESTAMP"),
 });
+
+export const usersRelations = relations(usersTable, ({ many }) => ({
+  websites: many(websitesTable),
+  files: many(filesTable),
+}));
+
+export const websitesRelations = relations(websitesTable, ({ one, many }) => ({
+  user: one(usersTable),
+  files: many(filesTable),
+}));
+
+export const filesRelations = relations(filesTable, ({ one }) => ({
+  user: one(websitesTable),
+}));

@@ -9,16 +9,14 @@ interface User {
 
 interface Props {
     user?: User;
+    files: any[];
 }
 
-interface Files {
-    files: any;
-}
-
-const dashboardHtml = ({ user }: Props) => ( 
+const dashboardHtml = ({ user, files }: Props) => ( 
     <>
         <h1>PoyoWeb's Dashboard!</h1>
         <p>Upload, delete, rename and edit your files here.</p>
+        {JSON.stringify(files)}
     </>
 );
 

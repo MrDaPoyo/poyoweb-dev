@@ -1,9 +1,12 @@
 import 'dotenv/config';
-import { drizzle } from 'drizzle-orm/libsql';
-import * as schema from './db/schema';
 import { filesTable, usersTable, websitesTable } from './db/schema';
+import * as schema from './db/schema';
+import { eq } from 'drizzle-orm';
 
-const db = drizzle(process.env.DB_FILE_NAME!, { schema });
+import { drizzle } from 'drizzle-orm/bun-sqlite';
+import { Database } from 'bun:sqlite';
+const sqlite = new Database(process.env.DB_FILE_NAME!);
+const db = drizzle(sqlite, { schema });
 
 async function setupDB() {
     await db.run(`
@@ -48,7 +51,7 @@ async function getUserDataById(id: number) {
     }
     return new Promise(async (resolve, reject) => {
         try {
-            const result = await db.query.usersTable.findFirst({ with: { id } });
+            const result = await db.query.usersTable.findFirst({ where: eq(usersTable.id, id) });
             resolve(result);
         } catch (error) {
             reject(error);
@@ -76,7 +79,7 @@ async function insertFile(fileName: string, fileLocation: string, fileFullPath: 
 async function getFilesByUserId(userId: number) {
     return new Promise(async (resolve, reject) => {
         try {
-            const result = await db.query.filesTable.findFirst({with: {id: userId}});
+            const result = await db.select().from(filesTable).where(eq(filesTable.userID, userId));
             resolve(result);
         } catch (error) {
             reject(error);
