@@ -11,6 +11,10 @@ interface Props {
     user?: User;
 }
 
+interface Files {
+    files: any;
+}
+
 const dashboardHtml = ({ user }: Props) => ( 
     <>
         <h1>PoyoWeb's Dashboard!</h1>

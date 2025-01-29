@@ -2,7 +2,7 @@ import { Elysia } from 'elysia';
 import { jwt } from '@elysiajs/jwt';
 import { html, Html } from '@elysiajs/html';
 
-import { db, setupDB, getUserDataById } from './db';
+import { db, setupDB, getUserDataById, getFilesByUserId } from './db';
 
 import BaseHtml from './components/base';
 import DashboardHtml from './components/dashboard';
@@ -35,10 +35,12 @@ export class DashboardModule {
                     },
                     (app) =>
                         app
-                            .get("/", () => {
+                            .get("/", async () => {
                                 var user = app.state(user) as any;
+                                var files = await getFilesByUserId(user.id);
+                                console.log(files);
                                 return <BaseHtml>
-                                    <DashboardHtml user={user}/>
+                                    <DashboardHtml user={user} files={files}/>
                                 </BaseHtml>
                             })
     ))};

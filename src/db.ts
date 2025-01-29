@@ -1,8 +1,9 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/libsql';
-import { filesTable } from './db/schema';
+import * as schema from './db/schema';
+import { filesTable, usersTable } from './db/schema';
 
-const db = drizzle(process.env.DB_FILE_NAME!);
+const db = drizzle(process.env.DB_FILE_NAME!, { schema });
 
 async function setupDB() {
     await db.run(`
@@ -38,7 +39,7 @@ async function setupDB() {
             fileSize INTEGER DEFAULT 0 NOT NULL,                            -- Weight (size) of the file in bytes
             status TEXT DEFAULT 'active',			                        -- Status of the file (e.g., active, archived, deleted)
             statusLastModifiedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (userID) REFERENCES users(id))`)
+            FOREIGN KEY (userID) REFERENCES users_table(id))`)
 }
 
 async function getUserDataById(id: number) {
@@ -46,7 +47,12 @@ async function getUserDataById(id: number) {
         return null;
     }
     return new Promise(async (resolve, reject) => {
-        resolve(await db.get('SELECT * FROM users_table WHERE id = ' + id));
+        try {
+            const result = await db.query.usersTable.findFirst({ with: { id } });
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
     });
 }
 
@@ -67,10 +73,10 @@ async function insertFile(fileName: string, fileLocation: string, fileFullPath: 
     });
 }
 
-async function getFilesByWebsiteId(userId: number) {
+async function getFilesByUserId(userId: number) {
     return new Promise(async (resolve, reject) => {
         try {
-            const result = await db.get('SELECT * FROM files_table WHERE userID = ' + userId);
+            const result = await db.query.filesTable.findFirst({with: {id: userId}});
             resolve(result);
         } catch (error) {
             reject(error);
@@ -78,4 +84,4 @@ async function getFilesByWebsiteId(userId: number) {
     });
 }
 
-export { db, setupDB, getUserDataById, insertFile, getFilesByWebsiteId };
+export { db, setupDB, getUserDataById, insertFile, getFilesByUserId };
