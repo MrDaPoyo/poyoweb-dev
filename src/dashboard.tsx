@@ -39,8 +39,9 @@ export class DashboardModule {
                                 var user = app.state(user) as any;
                                 var files = await getFilesByUserId(user.id);
                                 return <BaseHtml>
-                                    <DashboardHtml user={user} files={files}/>
+                                    <DashboardHtml user={user} files={files} />
                                 </BaseHtml>
                             })
-    ))};
+                ))
+    };
 }
