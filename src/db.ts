@@ -67,4 +67,15 @@ async function insertFile(fileName: string, fileLocation: string, fileFullPath: 
     });
 }
 
-export { db, setupDB, getUserDataById, insertFile };
+async function getFilesByWebsiteId(userId: number) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const result = await db.get('SELECT * FROM files_table WHERE userID = ' + userId);
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+export { db, setupDB, getUserDataById, insertFile, getFilesByWebsiteId };
