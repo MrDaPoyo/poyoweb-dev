@@ -12,17 +12,19 @@ interface Props {
     files: any[];
 }
 
-const dashboardHtml = ({ user, files }: Props) => ( 
-    <>
-        <h1>PoyoWeb's Dashboard!</h1>
-        <p>Upload, delete, rename and edit your files here.</p>
-        <form method="POST" enctype="multipart/form-data" action="/dashboard/fileUpload">
-            <p>Upload a file :D</p>
-            <input type="file" name="file" />
-            <button type="submit">Upload</button>
-        </form>
-        {JSON.stringify(files)}
-    </>
-);
+export function dashboardHtml({ user, files }: Props): JSX.Element {
+    return (
+        <>
+            <h1>PoyoWeb's Dashboard!</h1>
+            <p>Upload, delete, rename and edit your files here.</p>
+            <form method="POST" enctype="multipart/form-data" action="/dashboard/fileUpload">
+                <p>Upload a file :D</p>
+                <input type="file" name="file" />
+                <button type="submit">Upload</button>
+            </form>
+            {JSON.stringify(files)}
+        </>
+    );
+}
 
 export default dashboardHtml;
