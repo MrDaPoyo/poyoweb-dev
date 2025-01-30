@@ -1,8 +1,8 @@
-import { Elysia } from 'elysia';
+import { Elysia, t } from 'elysia';
 import { jwt } from '@elysiajs/jwt';
 import { html, Html } from '@elysiajs/html';
 
-import { db, setupDB, getUserDataById, getFilesByUserId } from './db';
+import { db, setupDB, getUserDataById, getFilesByUserId, insertFile } from './db';
 
 import BaseHtml from './components/base';
 import DashboardHtml from './components/dashboard';
@@ -41,6 +41,24 @@ export class DashboardModule {
                                 return <BaseHtml>
                                     <DashboardHtml user={user} files={files} />
                                 </BaseHtml>
+                            }).post("/fileUpload", async ({ body }) => {
+                                var user = app.state(user) as any;
+                                if (!body.file) {
+                                    return { error: "No file uploaded." };
+                                }
+                                const file = body.file;
+                                await insertFile(
+                                    file.name,
+                                    file.name,
+                                    file.name,
+                                    await user.id,
+                                    file.size
+                                );
+                                return { success: true };
+                            }, {
+                                body: t.Object({
+                                    file: t.File()
+                                })
                             })
                 ))
     };
