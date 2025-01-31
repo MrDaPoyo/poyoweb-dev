@@ -36,7 +36,7 @@ app.use(html())
     }, (app) =>
       app.get('/', async ({ store }: { store: { user?: { userId: number } } }) => {
         var userId = store.user?.userId as number;
-        const user = await getUserDataById(userId);
+        const user = await getUserDataById(userId) as any;
 
         return (
           <BaseHtml>
