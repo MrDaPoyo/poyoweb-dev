@@ -1,7 +1,6 @@
 import { Html, html } from '@elysiajs/html';
 import React from 'react';
 
-
 interface User {
     username: string;
     id: number;
