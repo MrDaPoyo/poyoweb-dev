@@ -1,4 +1,3 @@
-import * as elements from 'typed-html';
 import React from 'react';
 
 function BaseHtml({ children }: React.PropsWithChildren) {
