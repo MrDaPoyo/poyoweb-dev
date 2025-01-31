@@ -1,6 +1,8 @@
 import * as elements from 'typed-html';
+import React from 'react';
 
-const BaseHtml = ({ children }: elements.Children) => `
+function BaseHtml({ children }: React.PropsWithChildren) {
+  return (`
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -13,6 +15,7 @@ const BaseHtml = ({ children }: elements.Children) => `
       <script src="https://unpkg.com/htmx.org@1.9.12/"></script>
     </body>
   </html>
-`
+`);
+}
 
 export default BaseHtml;

@@ -10,11 +10,13 @@
     "@elysiajs/html": "^1.2.0",
     "@elysiajs/jwt": "^1.2.0",
     "@libsql/client": "^0.14.0",
+    "@types/react": "^19.0.8",
     "better-sqlite3": "^11.8.1",
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.4",
     "drizzle-orm": "^0.39.1",
     "elysia": "latest",
+    "react": "^19.0.0",
     "typed-html": "^3.0.1"
   },
   "devDependencies": {
