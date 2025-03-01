@@ -1,32 +1,38 @@
-## PoyoWeb Documentation
+# sv
 
-### Introduction
-The PoyoWeb is a free and open-source static web hosting service built with Elysia, Bun, and TypeScript. It aims to provide a simple and efficient way to host static websites with minimal configuration.
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-### Features
-- **Free Hosting**: Host your static website for free.
-- **Built with Elysia and Bun**: Leverages the power of Elysia and Bun for a fast and efficient runtime.
-- **TypeScript Support**: Built with TypeScript for better type safety and developer experience.
+## Creating a project
 
-### Installation
-To install PoyoWeb, clone the repository and install the dependencies:
+If you're seeing this, you've probably already done this step. Congrats!
+
 ```bash
-git clone https://github.com/mrdapoyo/poyoweb-dev
-cd poyoweb
-bun install
+# create a new project in the current directory
+npx sv create
+
+# create a new project in my-app
+npx sv create my-app
 ```
 
-### Usage
-To start using PoyoWeb, run the following command:
+## Developing
+
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
 ```bash
-bun run src/index.tsx
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
 ```
 
-### Deployment
-To deploy your static website with PoyoWeb, place your static files in the `public` directory and start the server:
+## Building
+
+To create a production version of your app:
+
 ```bash
-bun run deploy
+npm run build
 ```
 
-### License
-PoyoWeb is licensed under the Protect-Open-Source License.
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
