@@ -1,1 +1,1 @@
-bun run ./poyoweb-server/. & cd poyoweb-client/ && bun --bun dev run
+bun run ./poyoweb-server & cd poyoweb-client && bun run dev
