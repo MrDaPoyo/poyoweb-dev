@@ -1,1 +1,1 @@
-bun run ./poyoweb-server & cd poyoweb-client && bun run dev
+bun run ./poyoweb-server & cd poyoweb-client && bun run dev --port 4000
