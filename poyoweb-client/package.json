@@ -1,5 +1,5 @@
 {
-	"name": "poyoweb",
+	"name": "poyoweb-client",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
@@ -11,7 +11,11 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+		"db:start": "docker compose up",
+		"db:push": "drizzle-kit push",
+		"db:migrate": "drizzle-kit migrate",
+		"db:studio": "drizzle-kit studio"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -19,7 +23,7 @@
 		"@sveltejs/adapter-auto": "^4.0.0",
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
-		"@types/bun": "^1.2.4",
+		"drizzle-kit": "^0.30.2",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^3.0.0",
@@ -33,10 +37,7 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
-		"@elysiajs/eden": "^1.2.0",
-		"@elysiajs/jwt": "^1.2.0",
-		"bcryptjs": "^3.0.2",
-		"elysia": "^1.2.24",
-		"jsonwebtoken": "^9.0.2"
+		"drizzle-orm": "^0.40.0",
+		"postgres": "^3.4.5"
 	}
 }
