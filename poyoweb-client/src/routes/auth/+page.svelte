@@ -3,7 +3,11 @@
 <script>
     let email = "";
     let password = "";
-    let responseMessage = "";
+    let registerEmail = "";
+    let registerPassword = "";
+    let registerUsername = "";
+    let data = "";
+    let registerData = "";
 
     async function submitForm(event) {
         event.preventDefault();
@@ -14,8 +18,19 @@
             body: JSON.stringify({ email, password })
         });
 
-        const data = await res.json();
-        alert(JSON.stringify(await data));
+        data = await res.json();
+    }
+
+    async function submitRegisterForm(event) {
+        event.preventDefault();
+
+        const res = await fetch('http://localhost:3000/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: registerEmail, password: registerPassword, name: registerUsername })
+        });
+
+        registerData = await res.json();
     }
 </script>
 
@@ -25,6 +40,18 @@
     <button type="submit">Submit</button>
 </form>
 
-{#if responseMessage}
-    <p>{responseMessage}</p>
+{#if data}
+    <p>{data.email}</p>
+{/if}
+
+<h2>Register</h2>
+<form on:submit={submitRegisterForm}>
+    <input type="text" bind:value={registerEmail} placeholder="example@example.com" required />
+    <input type="text" bind:value={registerUsername} required placeholder="name.poyoweb.org" />
+    <input type="password" bind:value={registerPassword} placeholder="*********" required />
+    <button type="submit">Register</button>
+</form>
+
+{#if registerData}
+    <p>{registerData.email}</p>
 {/if}
