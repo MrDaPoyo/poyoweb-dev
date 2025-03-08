@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import { readDb, registerUser, verifyUser } from "../db/db";
+import { readDb, registerUser, verifyUser, createSession } from "../db/db";
 
 interface User {
     email: string;
@@ -11,10 +11,12 @@ const router = new Elysia()
     .get("/", () => {
         return readDb();
     })
-    .post("/login", async ({ body }) => {
+    .post("/login", async ({ body, set, request }) => {
             const { password, email } = await body;
-            if (await verifyUser(email, password)) {
-                return { success: true };
+            const userId = await verifyUser(email, password);
+            if (userId) {
+                const sessionId = await createSession(userId, new Date(Date.now() + 86400000), request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '');
+                return { success: true, sessionId };
             } else {
                 return { success: false };
             }

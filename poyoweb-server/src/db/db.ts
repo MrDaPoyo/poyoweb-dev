@@ -21,12 +21,14 @@ export async function verifyUser(email: string, password: string) {
   if (user.length === 0) {
     return false;
   }
-  return bcrypt.compareSync(password, user[0].password);
+  if (bcrypt.compareSync(password, user[0].password)) {
+    return user[0].id;
+  }
 }
 
-export async function createSession(userId: number, expiresAt: number, ipAddress: string) {
+export async function createSession(userId: number, expiresAt: Date, ipAddress: string) {
   const sessionToken = uuidv4();
-  const existingToken = await db.select().from(schema.authTokensTable).where({session_token: sessionToken });
+  const existingToken = await db.select().from(schema.authTokensTable).where(eq(schema.authTokensTable.session_token, sessionToken));
   if (existingToken.length > 0) {
     return createSession(userId, expiresAt, ipAddress);
   }
@@ -36,7 +38,7 @@ export async function createSession(userId: number, expiresAt: number, ipAddress
 }
 
 export async function validateSession(sessionToken: string) {
-  const token = await db.select().from(schema.authTokensTable).where(eq(schema.authTokensTable.sessionToken, sessionToken));
+  const token = await db.select().from(schema.authTokensTable).where(eq(schema.authTokensTable.session_token, sessionToken));
   if (token.length === 0) {
     return false;
   }
