@@ -8,15 +8,14 @@ kill_process() {
         echo "Stopping $pattern..."
         kill $pids
         sleep 2
+    else
+        echo "$pattern is not running."
     fi
 }
 
 # Kill existing processes
-kill_process "bun run dev"
-kill_process "docker compose up"
-kill_process "npm run dev -- --port 4000"
+kill_process "bun run dev" &
+kill_process "docker compose up" &
+kill_process "npm run dev -- --port 4000" &
 
-# Restart the processes
-(cd poyoweb-server && bun run dev) & 
-(cd poyoweb-server && docker compose up) & 
-(cd poyoweb-client && npm run dev -- --port 4000)
+wait
