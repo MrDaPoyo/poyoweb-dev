@@ -53,5 +53,5 @@
 </form>
 
 {#if registerData}
-    <p>{registerData.email}</p>
+    <p>{JSON.stringify(registerData)}</p>
 {/if}

@@ -7,14 +7,18 @@
   },
   "dependencies": {
     "@elysiajs/cors": "^1.2.0",
+    "@types/uuid": "^10.0.0",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.5",
     "drizzle-orm": "^0.40.0",
     "elysia": "latest",
-    "pg": "^8.13.3"
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.3",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/pg": "^8.11.11",
     "bun-types": "latest",
     "tsx": "^4.19.3"

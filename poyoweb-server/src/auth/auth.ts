@@ -13,6 +13,7 @@ const router = new Elysia()
     })
     .post("/login", async ({ body }) => {
             const { password, email } = await body;
+            
             return { password, email };
         },
         {
