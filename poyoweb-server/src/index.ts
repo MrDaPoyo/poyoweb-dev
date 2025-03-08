@@ -1,10 +1,14 @@
 import { Elysia } from "elysia";
+import { cors } from '@elysiajs/cors';
 
 import AuthRouter from "./auth/auth";
 
 const app = new Elysia()
+  .use(cors({
+    origin: 'http://localhost:5173', // Allow SvelteKit frontend
+    methods: ['GET', 'POST', 'PUT', 'UPDATE', 'DELETE'], // Allowed methods
+  }))
   .get("/", () => "Hello PoyoDevs! This is the PoyoWeb's API. :3")
-  .get("/db", () => `${process.env.DATABASE_URL}`)
   .group('/auth', (app) =>
     app.use(AuthRouter)
   )

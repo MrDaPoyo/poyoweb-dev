@@ -3,13 +3,14 @@ import { readDb } from "../db/db";
 
 const router = new Elysia()
     .get("/", () => `Authentication API. :P - ${JSON.stringify(readDb())}`)
-    .post("/login", ({ body }) => {
-            const { password, email } = body;
+    .post("/login", async ({ body }) => {
+            const { password, email } = await body;
+            console.log(`Login attempt with email: ${email} and password: ${password}`);
             return { password, email };
         },
         {
             body: t.Object({
-                password: t.Number(),
+                password: t.String(),
                 email: t.String()
             })
         }
