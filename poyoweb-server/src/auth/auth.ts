@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import { readDb, registerUser } from "../db/db";
+import { readDb, registerUser, verifyUser } from "../db/db";
 
 interface User {
     email: string;
@@ -13,8 +13,11 @@ const router = new Elysia()
     })
     .post("/login", async ({ body }) => {
             const { password, email } = await body;
-            
-            return { password, email };
+            if (await verifyUser(email, password)) {
+                return { success: true };
+            } else {
+                return { success: false };
+            }
         },
         {
             body: t.Object({

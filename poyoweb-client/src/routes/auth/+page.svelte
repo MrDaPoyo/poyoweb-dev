@@ -41,7 +41,7 @@
 </form>
 
 {#if data}
-    <p>{data.email}</p>
+    <p>{JSON.stringify(data)}</p>
 {/if}
 
 <h2>Register</h2>

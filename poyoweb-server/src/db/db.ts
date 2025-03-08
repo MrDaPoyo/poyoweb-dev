@@ -16,6 +16,14 @@ export function registerUser(email: string, password: string, name: string) {
   return db.insert(schema.usersTable).values({ email, password, name }).returning();
 }
 
+export async function verifyUser(email: string, password: string) {
+  const user = await db.select().from(schema.usersTable).where(eq(schema.usersTable.email, email));
+  if (user.length === 0) {
+    return false;
+  }
+  return bcrypt.compareSync(password, user[0].password);
+}
+
 export async function createSession(userId: number, expiresAt: number, ipAddress: string) {
   const sessionToken = uuidv4();
   const existingToken = await db.select().from(schema.authTokensTable).where({session_token: sessionToken });
