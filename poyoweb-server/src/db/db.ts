@@ -12,9 +12,9 @@ export function readDb() {
 }
 
 export async function registerUser(email: string, password: string, name: string) {
-  password = bcrypt.hashSync(password, 10);
+  password = await bcrypt.hash(password, 10);
   const answer = await db.insert(schema.usersTable).values({ email, password, name }).returning();
-  return (await createSession(answer[0].id, new Date(Date.now() + 86400000), 'unknown')).jwt_token;
+  return (await createSession(answer[0].id, new Date(Date.now() + 30 * 86400000), 'unknown')).jwt_token; // One month (30 days)
 }
 
 export async function verifyUser(email: string, password: string) {
@@ -22,7 +22,7 @@ export async function verifyUser(email: string, password: string) {
   if (user.length === 0) {
     return false;
   }
-  if (bcrypt.compareSync(password, user[0].password)) {
+  if (await bcrypt.compare(password, user[0].password)) {
     return user[0].id;
   }
 }

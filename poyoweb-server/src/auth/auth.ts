@@ -10,7 +10,7 @@ interface User {
 
 const router = new Elysia()
   .use(ip())
-  .get("/", ({ ip }: {ip?: string}) => ip)
+  .get("/", ({ ip }: {ip?: string}) => ip) // TODO: Remove this, this is just for testing --Poyo
   .post("/login", async ({ body, ip }: { body: { password: string; email: string }, ip: string}) => {
       const { password, email } = body;
       const userId = await verifyUser(email, password);
@@ -43,6 +43,13 @@ const router = new Elysia()
     }
     const result = await registerUser(email, password, name);
     return { result };
+  },
+  {
+    body: t.Object({
+      password: t.String(),
+      email: t.String(),
+      name: t.String(),
+    }),
   });
 
 export default router;
