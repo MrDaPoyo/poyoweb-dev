@@ -49,7 +49,7 @@ export async function validateSession(sessionToken: string) {
   if (decoded.sid !== token[0].session_token) {
     return false;
   } else if (token[0].expires_at < new Date()) {
-    db.delete(schema.authTokensTable).where(eq(schema.authTokensTable.session_token, sessionToken));
+    await db.delete(schema.authTokensTable).where(eq(schema.authTokensTable.session_token, sessionToken));
     return false;
   }
   return true;
