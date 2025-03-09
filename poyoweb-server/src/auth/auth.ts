@@ -43,9 +43,6 @@ const router = new Elysia()
     if (!nameRegex.test(name)) {
       return { result: "Invalid name format. Name must start with a letter or number and contain only letters, numbers, underscores, or hyphens. Length must be 2-16 characters." };
     }
-    if (!password || !email || !name) {
-      return { result: "Missing fields" };
-    }
     const result = await registerUser(email, password, name);
     return { result };
   },

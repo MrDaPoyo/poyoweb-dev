@@ -7,6 +7,8 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 const db = drizzle(process.env.DB_URL!, { schema });
 
+const oneMonth = 30 * 86400000; // Self explanatory
+
 export function readDb() {
   return db.select().from(schema.usersTable);
 }
@@ -14,7 +16,7 @@ export function readDb() {
 export async function registerUser(email: string, password: string, name: string) {
   password = await bcrypt.hash(password, 10);
   const answer = await db.insert(schema.usersTable).values({ email, password, name }).returning();
-  return (await createSession(answer[0].id, new Date(Date.now() + 30 * 86400000), 'unknown')).jwt_token; // One month (30 days)
+  return (await createSession(answer[0].id, new Date(Date.now() + oneMonth), 'unknown')).jwt_token;
 }
 
 export async function verifyUser(email: string, password: string) {
