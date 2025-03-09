@@ -1,57 +1,81 @@
-<h1>PAPERS, PLEASE!</h1>
-<p>Nah you're not getting thru TSA, katanas aren't allowed :P</p>
-<script>
-    let email = "";
-    let password = "";
-    let registerEmail = "";
-    let registerPassword = "";
-    let registerUsername = "";
-    let data = "";
-    let registerData = "";
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	let username = '';
+	let password = '';
+	let error = '';
+	let email = '';
 
-    async function submitForm(event) {
-        event.preventDefault();
+	async function login() {
+		error = '';
+        const mode = 'login';
+		const response = await fetch('/auth', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ mode, email, password })
+		});
 
-        const res = await fetch('http://localhost:3000/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
+		const result = await response.json();
 
-        data = await res.json();
-    }
+		if (response.ok) {
+			goto('/dashboard'); // Redirect after successful login
+		} else {
+			error = result.error;
+		}
+	}
 
-    async function submitRegisterForm(event) {
-        event.preventDefault();
+	async function register() {
+		error = '';
+        const mode = 'register';
+		const response = await fetch('/auth', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ mode, username, password, email })
+		});
 
-        const res = await fetch('http://localhost:3000/auth/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: registerEmail, password: registerPassword, name: registerUsername })
-        });
+		const result = await response.json();
 
-        registerData = await res.json();
-    }
+		if (response.ok) {
+			goto('/dashboard'); // Redirect after successful login
+		} else {
+			error = result.error;
+		}
+	}
 </script>
 
-<form on:submit={submitForm}>
-    <input type="text" bind:value={email} placeholder="example@example.com" required />
-    <input type="password" bind:value={password} required />
-    <button type="submit">Submit</button>
-</form>
+<h1>PAPERS, PLEASE!</h1>
+<p>Nah you're not getting thru TSA, katanas aren't allowed :P</p>
 
-{#if data}
-    <p>{JSON.stringify(data)}</p>
+{#if error}
+	<p style="color: red;">{error}</p>
 {/if}
 
-<h2>Register</h2>
-<form on:submit={submitRegisterForm}>
-    <input type="text" bind:value={registerEmail} placeholder="example@example.com" required />
-    <input type="text" bind:value={registerUsername} required placeholder="name.poyoweb.org" />
-    <input type="password" bind:value={registerPassword} placeholder="*********" required />
-    <button type="submit">Register</button>
+<form on:submit|preventDefault={login}>
+	<label>
+		Email:
+		<input type="email" bind:value={email} required />
+	</label>
+
+	<label>
+		Password:
+		<input type="password" bind:value={password} required />
+	</label>
+
+	<button type="submit">Login</button>
 </form>
 
-{#if registerData}
-    <p>{JSON.stringify(registerData)}</p>
-{/if}
+<form on:submit|preventDefault={register}>
+	<label>
+		Username:
+		<input type="text" bind:value={username} required />
+	</label>
+	<label>
+		Email:
+		<input type="email" bind:value={email} required />
+	</label>
+	<label>
+		Password:
+		<input type="password" bind:value={password} required />
+	</label>
+
+	<button type="submit">Register</button>
+</form>

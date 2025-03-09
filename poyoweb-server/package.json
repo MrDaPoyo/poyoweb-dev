@@ -13,6 +13,7 @@
     "drizzle-kit": "^0.30.5",
     "drizzle-orm": "^0.40.0",
     "elysia": "latest",
+    "elysia-ip": "^1.0.8",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.3",
     "uuid": "^11.1.0"

@@ -14,7 +14,7 @@ export const authTokensTable = pgTable("auth_tokens", {
   user_id: integer().notNull().references(() => usersTable.id),
   expires_at: timestamp('expires_at').notNull().defaultNow(),
   session_token: varchar({ length: 255 }).notNull(),
-  ip_address: varchar({ length: 255 }).notNull(),
+  ip_address: varchar({ length: 255 }),
   creation_date: timestamp('creation_date').notNull().defaultNow(),
 });
 

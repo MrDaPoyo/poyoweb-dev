@@ -11,9 +11,10 @@ export function readDb() {
   return db.select().from(schema.usersTable);
 }
 
-export function registerUser(email: string, password: string, name: string) {
+export async function registerUser(email: string, password: string, name: string) {
   password = bcrypt.hashSync(password, 10);
-  return db.insert(schema.usersTable).values({ email, password, name }).returning();
+  const answer = await db.insert(schema.usersTable).values({ email, password, name }).returning();
+  return (await createSession(answer[0].id, new Date(Date.now() + 86400000), 'unknown')).jwt_token;
 }
 
 export async function verifyUser(email: string, password: string) {
@@ -33,8 +34,8 @@ export async function createSession(userId: number, expiresAt: Date, ipAddress: 
     return createSession(userId, expiresAt, ipAddress);
   }
   const jwtToken = jwt.sign({ sid: sessionToken }, process.env.JWT_SECRET!);
-  const query = db.insert(schema.authTokensTable).values({ user_id: userId, session_token: sessionToken, expires_at: expiresAt, ip_address: ipAddress}).returning();
-  return { query: await query, session_token: sessionToken, jwt_token: jwtToken };
+  db.insert(schema.authTokensTable).values({ user_id: userId, session_token: sessionToken, expires_at: expiresAt, ip_address: ipAddress}).returning();
+  return { jwt_token: jwtToken };
 }
 
 export async function validateSession(sessionToken: string) {
