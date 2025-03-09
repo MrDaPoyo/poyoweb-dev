@@ -12,7 +12,6 @@ const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(() => re
 const errorSleep = sleep(2000);
 
 const router = new Elysia()
-  .use(ip())
   .get("/", ({ ip }: {ip?: string}) => ip) // TODO: Remove this, this is just for testing --Poyo
   .post("/login", async ({ body, ip }: { body: { password: string; email: string }, ip: string}) => {
       const { password, email } = body;
