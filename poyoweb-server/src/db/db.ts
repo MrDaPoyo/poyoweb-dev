@@ -33,7 +33,7 @@ export async function createSession(userId: number, expiresAt: Date, ipAddress: 
   if (existingToken.length > 0) {
     return createSession(userId, expiresAt, ipAddress);
   }
-  const jwtToken = jwt.sign({ sid: sessionToken }, process.env.JWT_SECRET!);
+  const jwtToken = jwt.sign({ sid: sessionToken }, process.env.JWT_SECRET!, { expiresIn: '30d' });
   db.insert(schema.authTokensTable).values({ user_id: userId, session_token: sessionToken, expires_at: expiresAt, ip_address: ipAddress}).returning();
   return { jwt_token: jwtToken };
 }
