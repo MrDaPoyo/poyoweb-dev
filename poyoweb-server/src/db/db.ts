@@ -46,6 +46,9 @@ export async function validateSession(sessionToken: string) {
   const decoded = jwt.verify(sessionToken, process.env.JWT_SECRET!) as { sid: string };
   if (decoded.sid !== token[0].session_token) {
     return false;
+  } else if (token[0].expires_at < new Date()) {
+    db.delete(schema.authTokensTable).where(eq(schema.authTokensTable.session_token, sessionToken));
+    return false;
   }
   return true;
 }
