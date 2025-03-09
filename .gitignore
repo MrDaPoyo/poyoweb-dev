@@ -1,0 +1,13 @@
+.env
+*Zone.Identifier
+.DS_Store
+Thumbs.db
+node_modules
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.output
+.vercel
+.netlify
+.wrangler
+.svelte-kit
+build
