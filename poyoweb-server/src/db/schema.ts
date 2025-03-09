@@ -1,4 +1,4 @@
-import { integer, pgTable, varchar, timestamp, time } from "drizzle-orm/pg-core";
+import { text, integer, pgTable, varchar, timestamp, time } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm/sql";
 
 export const usersTable = pgTable("users", {
@@ -6,7 +6,7 @@ export const usersTable = pgTable("users", {
   name: varchar({ length: 16 }).notNull().unique(),
   email: varchar({ length: 100 }).notNull().unique(),
   password: varchar().notNull(),
-  tier: integer().default(1).notNull(),
+  tier: text().default("normal").notNull(),
 });
 
 export const authTokensTable = pgTable("auth_tokens", {
