@@ -17,7 +17,7 @@ const router = new Elysia()
       if (userId) {
         const jwtToken = await createSession(
           userId,
-          new Date(Date.now() + 86400000),
+          new Date(Date.now() + 30 * 86400000), // One month (30 days)
           ip
         );
         return { success: true, jwt_token: jwtToken.jwt_token };
