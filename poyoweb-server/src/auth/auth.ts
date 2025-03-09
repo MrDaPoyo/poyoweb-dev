@@ -8,18 +8,20 @@ interface User {
   name: string;
 }
 
-const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(() => resolve(), ms));
-const errorSleep = sleep(2000);
+const oneMonth = 30 * 86400000; // Self explanatory
 
 const router = new Elysia()
   .get("/", ({ ip }: {ip?: string}) => ip) // TODO: Remove this, this is just for testing --Poyo
   .post("/login", async ({ body, ip }: { body: { password: string; email: string }, ip: string}) => {
-      const { password, email } = body;
-      const userId = await verifyUser(email, password);
+    const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(() => resolve(), ms));
+    const errorSleep = sleep(2000);  
+    
+    const { password, email } = body;
+    const userId = await verifyUser(email, password);
       if (userId) {
         const jwtToken = await createSession(
           userId,
-          new Date(Date.now() + 30 * 86400000), // One month (30 days)
+          new Date(Date.now() + oneMonth),
           ip
         );
         return { success: true, jwt_token: jwtToken.jwt_token };
