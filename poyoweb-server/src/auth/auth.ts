@@ -8,6 +8,9 @@ interface User {
   name: string;
 }
 
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(() => resolve(), ms));
+const errorSleep = sleep(2000);
+
 const router = new Elysia()
   .use(ip())
   .get("/", ({ ip }: {ip?: string}) => ip) // TODO: Remove this, this is just for testing --Poyo
@@ -22,6 +25,7 @@ const router = new Elysia()
         );
         return { success: true, jwt_token: jwtToken.jwt_token };
       } else {
+        await errorSleep;
         return { success: false };
       }
     },
