@@ -13,10 +13,10 @@ export function readDb() {
   return db.select().from(schema.usersTable);
 }
 
-export async function registerUser(email: string, password: string, name: string) {
+export async function registerUser(email: string, password: string, name: string, ipAddress: string) {
   password = await bcrypt.hash(password, 10);
   const answer = await db.insert(schema.usersTable).values({ email, password, name }).returning();
-  return (await createSession(answer[0].id, new Date(Date.now() + oneMonth), 'unknown')).jwt_token;
+  return (await createSession(answer[0].id, new Date(Date.now() + oneMonth), ipAddress)).jwt_token;
 }
 
 export async function verifyUser(email: string, password: string) {

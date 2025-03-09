@@ -37,13 +37,13 @@ const router = new Elysia()
       }),
     }
   )
-  .post("/register", async ({ body }: {body: {password: string, email: string, name: string}}) => {
+  .post("/register", async ({ body, ip }: {body: {password: string, email: string, name: string}, ip: string}) => {
     const { password, email, name } = (await body) as User;
     const nameRegex = /^[a-zA-Z0-9][\w-]{2,16}$/;
     if (!nameRegex.test(name)) {
       return { result: "Invalid name format. Name must start with a letter or number and contain only letters, numbers, underscores, or hyphens. Length must be 2-16 characters." };
     }
-    const result = await registerUser(email, password, name);
+    const result = await registerUser(email, password, name, ip);
     return { result };
   },
   {
