@@ -1,6 +1,7 @@
 import { Elysia, t } from "elysia";
 import { ip } from "elysia-ip";
-import { readDb, registerUser, verifyUser, createSession } from "../db/db";
+import { validateSession, registerUser, verifyUser, createSession, getUserDataBySession } from "../db/db";
+import jwt from "jsonwebtoken";
 
 interface User {
   email: string;
@@ -14,7 +15,7 @@ const router = new Elysia()
   .get("/", ({ ip }: {ip?: string}) => ip) // TODO: Remove this, this is just for testing --Poyo
   .post("/login", async ({ body, ip }: { body: { password: string; email: string }, ip: string}) => {
     const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(() => resolve(), ms));
-    const errorSleep = sleep(2000);  
+    const errorSleep = sleep(2000);
     
     const { password, email } = body;
     const userId = await verifyUser(email, password);
@@ -49,7 +50,21 @@ const router = new Elysia()
       name: t.String({
         pattern: "^[a-zA-Z0-9][\w-]{2,16}$",
       }),
-    }),
+    })
+    .post("/verifyJwt/:id", async ({ params: { id } }: { params: { id: string }}) => {
+      const token = id;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { sid: string };
+      if (decoded) {
+        const session = await validateSession(decoded.sid);
+        if (session) {
+          return { success: true, decoded: await getUserDataBySession(session) };
+        } else {
+          return { success: false };
+        }
+      } else {
+        return { success: false };
+      }
+    })
   });
 
 export default router;

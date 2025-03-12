@@ -18,5 +18,5 @@ kill_process "npm run dev -- --port 4000"
 
 # Restart the processes
 (cd poyoweb-server && bun run dev) & 
-(cd poyoweb-server && docker compose up) & 
+(cd poyoweb-server && docker compose up -d) & 
 (cd poyoweb-client && npm run dev -- --port 4000)

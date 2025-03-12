@@ -105,4 +105,19 @@ export async function validateSession(sessionToken: string) {
   }
 }
 
+export function getUserDataBySession(session: string) {
+  return db
+    .select()
+    .from(schema.usersTable)
+    .where(
+      eq(
+        schema.usersTable.id,
+        db
+          .select(schema.authTokensTable.user_id)
+          .from(schema.authTokensTable)
+          .where(eq(schema.authTokensTable.session_token, session))
+      )
+    );
+}
+
 export default db;
