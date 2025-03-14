@@ -17,15 +17,15 @@ const router = new Elysia()
     const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(() => resolve(), ms));
     const errorSleep = sleep(2000);
     
-    const { password, email } = body;
-    const userId = await verifyUser(email, password);
+    const userId = await verifyUser(body.email, body.password);
       if (userId) {
         const jwtToken = await createSession(
           userId,
           new Date(Date.now() + oneMonth),
           ip
         );
-        return { success: true, jwt_token: jwtToken.jwt_token };
+        const actualJwt = jwtToken.jwt_token;
+        return { success: true, jwt_token: actualJwt };
       } else {
         await errorSleep;
         return { success: false };
@@ -57,7 +57,7 @@ const router = new Elysia()
     if (decoded) {
       const session = await validateSession(decoded.sid);
       if (session) {
-        return { success: true, decoded: await getUserDataBySession(session) };
+        return { success: true, decoded: await getUserDataBySession(decoded.sid) };
       } else {
         return { success: false };
       }

@@ -1,81 +1,63 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	let username = '';
-	let password = '';
-	let error = '';
-	let email = '';
+	import type { PageData, ActionData } from './$types';
+	import { enhance } from '$app/forms';
 
-	async function login() {
-		error = '';
-        const mode = 'login';
-		const response = await fetch('/auth', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ mode, email, password })
-		});
-
-		const result = await response.json();
-
-		if (response.ok) {
-			goto('/dashboard'); // Redirect after successful login
-		} else {
-			error = result.error;
-		}
+	// Define the form properties
+	interface FormData {
+		loginSuccess?: boolean;
+		incorrect?: boolean;
+		registerSuccess?: boolean;
+		registerError?: string;
 	}
 
-	async function register() {
-		error = '';
-        const mode = 'register';
-		const response = await fetch('/auth', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ mode, username, password, email })
-		});
-
-		const result = await response.json();
-
-		if (response.ok) {
-			goto('/dashboard'); // Redirect after successful login
-		} else {
-			error = result.error;
-		}
-	}
+	let { form }: { data: PageData; form: FormData } = $props();
 </script>
 
 <h1>PAPERS, PLEASE!</h1>
 <p>Nah you're not getting thru TSA, katanas aren't allowed :P</p>
 
-{#if error}
-	<p style="color: red;">{error}</p>
-{/if}
-
-<form on:submit|preventDefault={login}>
+<form method="POST" action="?/login" use:enhance>
+	{#if form?.incorrect}
+		<p class="error">Wrong email or password!</p>
+	{/if}
 	<label>
 		Email:
-		<input type="email" bind:value={email} required />
+		<input type="email" name="email" required />
 	</label>
-
 	<label>
 		Password:
-		<input type="password" bind:value={password} required />
+		<input type="password" name="password" required />
 	</label>
 
 	<button type="submit">Login</button>
 </form>
 
-<form on:submit|preventDefault={register}>
+<form method="POST" action="?/register" use:enhance>
 	<label>
 		Username:
-		<input type="text" bind:value={username} required />
+		<input type="text" name="username" required />
 	</label>
 	<label>
 		Email:
-		<input type="email" bind:value={email} required />
+		<input type="email" name="email" required />
 	</label>
 	<label>
 		Password:
-		<input type="password" bind:value={password} required />
+		<input type="password" name="password" required />
 	</label>
 
 	<button type="submit">Register</button>
+	{#if form?.registerSuccess}
+		<p class="success">Registration successful!</p>
+	{/if}
+
+	{#if form?.registerError}
+		<p class="error">Registration error: {form.registerError}</p>
+	{/if}
 </form>
+
+<style>
+	.error {
+		color: red;
+	}
+</style>
