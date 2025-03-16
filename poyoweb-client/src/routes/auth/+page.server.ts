@@ -2,7 +2,7 @@ import type { Actions } from './$types';
 import { goto } from '$app/navigation';
 
 export const actions = {
-	login: async ({ request, cookies, event }) => {
+	login: async ({ request, cookies }) => {
 		const formData = await request.formData();
 		const data = {
 			email: formData.get('email'),
