@@ -1,7 +1,8 @@
 import type { Actions } from './$types';
+import { goto } from '$app/navigation';
 
 export const actions = {
-	login: async ({ request }) => {
+	login: async ({ request, cookies, event }) => {
 		const formData = await request.formData();
 		const data = {
 			email: formData.get('email'),
@@ -17,9 +18,10 @@ export const actions = {
 				}
 			});
 
-			console.log(await response.json());
 			if (response.ok) {
-				return { loginSuccess: true };
+				const jwtToken = (await response.json()).jwt_token;
+				cookies.set('auth_token', jwtToken, { path: '/' });
+				return { loginSuccess: true, jwtToken: jwtToken, redirect: '/dashboard' };
 			} else {
 				return { loginSuccess: false, incorrect: true };
 			}
@@ -29,7 +31,7 @@ export const actions = {
 		}
 	},
 
-	register: async ({ request }) => {
+	register: async ({ request, cookies }) => {
 		try {
 			const formData = await request.formData();
 			const data = {
@@ -47,7 +49,9 @@ export const actions = {
 			});
 			console.log(await response.json());
 			if (response.ok) {
-				return { registerSuccess: true, jwtToken: (await response.json()).jwt_token };
+				const jwtToken = (await response.json()).jwt_token;
+				cookies.set('auth_token', jwtToken, { path: '/' });
+				return { registerSuccess: true, jwtToken: jwtToken };
 			} else {
 				const errorData = await response.json();
 				console.log(errorData);

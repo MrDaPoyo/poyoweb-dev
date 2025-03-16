@@ -8,6 +8,7 @@
 		incorrect?: boolean;
 		registerSuccess?: boolean;
 		registerError?: string;
+		redirect?: string;
 	}
 
 	let { form }: { data: PageData; form: FormData } = $props();
@@ -47,12 +48,12 @@
 	</label>
 
 	<button type="submit">Register</button>
-	{#if form?.registerSuccess}
-		<p class="success">Registration successful!</p>
-	{/if}
-
-	{#if form?.registerError}
-		<p class="error">Registration error: {form.registerError}</p>
+	{#if form?.loginSuccess}
+		<p class="success">Successfully logged in!</p>
+		{#if form?.redirect}
+			<p>Redirecting to "{form?.redirect}"...</p>
+			<meta http-equiv="refresh" content="2;url={form?.redirect}" />
+		{/if}
 	{/if}
 </form>
 
