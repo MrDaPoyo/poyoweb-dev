@@ -63,5 +63,9 @@ export const actions = {
 			console.log(error);
 			return { registerSuccess: false, registerError: JSON.stringify(await error) };
 		}
+	},
+	logout: async ({ cookies }) => {
+		cookies.set('auth_token', '', { path: '/' });
+		return { logoutSuccess: true, redirect: '/auth' };
 	}
 } satisfies Actions;
