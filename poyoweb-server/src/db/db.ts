@@ -113,7 +113,7 @@ export function getUserDataBySession(session: string) {
       eq(
         schema.usersTable.id,
         db
-          .select(schema.authTokensTable.user_id)
+          .select()
           .from(schema.authTokensTable)
           .where(eq(schema.authTokensTable.session_token, session))
       )

@@ -29,7 +29,6 @@ export const actions = {
 			return { loginSuccess: false, incorrect: true };
 		}
 	},
-
 	register: async ({ request, cookies }) => {
 		try {
 			const formData = await request.formData();
