@@ -11,11 +11,25 @@
 		redirect?: string;
 	}
 
-	let { form }: { data: PageData; form: FormData } = $props();
+	interface UserData {
+		id: number;
+		name: string;
+		email: string;
+	}
+
+	let { form, user }: { data: PageData; form: FormData, user: UserData } = $props();
 </script>
 
 <h1>PAPERS, PLEASE!</h1>
 <p>Nah you're not getting thru TSA, katanas aren't allowed :P</p>
+
+{#if user }
+	<p>Welcome, {user.name}!</p>
+	<p>Your email is {user.email}.</p>
+	<p><a href="?/logout">Logout</a></p>
+{:else}
+	<p>You are not logged in.</p>
+{/if}
 
 <form method="POST" action="?/login" use:enhance>
 	{#if form?.incorrect}
