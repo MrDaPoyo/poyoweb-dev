@@ -18,7 +18,11 @@ export const actions = {
 			});
 
 			if (response.ok) {
-				const jwtToken = (await response.json()).jwt_token;
+				const answer = await response.json();
+				if (await answer.success === false) {
+					return { loginSuccess: false, incorrect: true };
+				}
+				const jwtToken = answer.jwt_token;
 				cookies.set('auth_token', jwtToken, { path: '/' });
 				return { loginSuccess: true, jwtToken: jwtToken, redirect: '/dashboard' };
 			} else {
