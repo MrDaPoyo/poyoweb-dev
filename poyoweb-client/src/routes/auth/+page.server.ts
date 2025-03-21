@@ -22,8 +22,8 @@ export const actions = {
 				if (await answer.success === false) {
 					return { loginSuccess: false, incorrect: true };
 				}
-				const jwtToken = answer.jwt_token;
-				cookies.set('auth_token', jwtToken, { path: '/' });
+				const jwtToken = await answer.jwt_token;
+				cookies.set('auth_token', await jwtToken, { path: '/' });
 				return { loginSuccess: true, jwtToken: jwtToken, redirect: '/dashboard' };
 			} else {
 				return { loginSuccess: false, incorrect: true };
@@ -49,21 +49,18 @@ export const actions = {
 					'Content-Type': 'application/json'
 				}
 			});
-			console.log(await response.json());
 			if (response.ok) {
 				const jwtToken = (await response.json()).jwt_token;
 				cookies.set('auth_token', jwtToken, { path: '/' });
 				return { registerSuccess: true, jwtToken: jwtToken };
 			} else {
 				const errorData = await response.json();
-				console.log(errorData);
 				return {
 					registerSuccess: false,
 					registerError: JSON.stringify(errorData) || 'Unknown error'
 				};
 			}
 		} catch (error) {
-			console.log(error);
 			return { registerSuccess: false, registerError: JSON.stringify(await error) };
 		}
 	},
