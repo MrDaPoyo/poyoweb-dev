@@ -1,9 +1,10 @@
-import type { LayoutServerLoad } from './$types';
+import { redirect } from '@sveltejs/kit';
+import { requireAuth } from '../../lib/auth';
 
-export const load: LayoutServerLoad = async ({ locals }) => {
-    if (!locals.user) {
-        throw new Response(null, { status: 302, headers: { Location: '/auth' } });
+export const load = async ({ cookies }) => {
+    const authToken = await requireAuth(cookies);
+    if (!authToken) {
+        redirect(308, '/auth');
     }
-
-    return { user: locals.user };
+    return { user: authToken };
 };
