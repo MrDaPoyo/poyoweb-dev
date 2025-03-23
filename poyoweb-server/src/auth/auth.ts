@@ -61,11 +61,10 @@ const router = new Elysia()
         pattern: "^[a-zA-Z0-9][\\w-]{2,16}$",
       }),
     })
-  }).post("/verifyJwt/:id", async ({ params: { id } }: { params: { id: string }}) => {
-    const token = id;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { sid: string };
+  }).post("/verifyJwt/", async ({ body: { jwt_token } }: { body: { jwt_token: string }}) => {
+    const decoded = await jwt.verify(jwt_token, process.env.JWT_SECRET!) as { sid: string };
     if (decoded) {
-      const session = await validateSession(decoded.sid);
+      const session = await validateSession(await decoded.sid);
       if (session) {
         return { success: true, decoded: await getUserDataBySession(decoded.sid) };
       } else {
@@ -74,6 +73,11 @@ const router = new Elysia()
     } else {
       return { success: false };
     }
+  },
+  {
+    body: t.Object({
+      jwt_token: t.String(),
+    })
   });
 
 export default router;

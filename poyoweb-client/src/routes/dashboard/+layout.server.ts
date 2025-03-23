@@ -1,10 +1,12 @@
 import { redirect } from '@sveltejs/kit';
-import { requireAuth } from '../../lib/auth';
 
-export const load = async ({ cookies }) => {
-    const authToken = await requireAuth(cookies);
-    if (!authToken) {
-        redirect(308, '/auth');
+export const load = async ({ locals }) => {
+    // Use the user that was already attached in hooks.server.ts
+    if (!locals.user) {
+        throw redirect(303, '/auth');
     }
-    return { user: authToken };
+    
+    return { 
+        user: locals.user 
+    };
 };

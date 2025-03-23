@@ -62,30 +62,22 @@ export async function createSession(
   const jwtToken = jwt.sign({ sid: sessionToken }, process.env.JWT_SECRET!, {
     expiresIn: "30d",
   });
-  db.insert(schema.authTokensTable)
+  const authTokenReturning = await db.insert(schema.authTokensTable)
     .values({
       user_id: userId,
       session_token: sessionToken,
       expires_at: expiresAt,
       ip_address: ipAddress,
-    })
-    .returning();
+    }).returning();
   return { jwt_token: jwtToken };
 }
 
 export async function validateSession(sessionToken: string) {
   try {
-    const decoded = jwt.verify(sessionToken, process.env.JWT_SECRET!) as {
-      sid: string;
-    };
-    if (!decoded.sid) {
-      return false;
-    }
-
     const token = await db
       .select()
       .from(schema.authTokensTable)
-      .where(eq(schema.authTokensTable.session_token, decoded.sid));
+      .where(eq(schema.authTokensTable.session_token, sessionToken));
     if (token.length === 0) {
       return false;
     }
@@ -94,7 +86,7 @@ export async function validateSession(sessionToken: string) {
     if (token[0].expires_at < new Date()) {
       await db
         .delete(schema.authTokensTable)
-        .where(eq(schema.authTokensTable.session_token, decoded.sid));
+        .where(eq(schema.authTokensTable.session_token, sessionToken));
       return false;
     }
 
