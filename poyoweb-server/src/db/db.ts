@@ -74,11 +74,11 @@ export async function createSession(
 
 export async function validateSession(sessionToken: string) {
   try {
-    const token = await db
-      .select()
-      .from(schema.authTokensTable)
-      .where(eq(schema.authTokensTable.session_token, sessionToken));
-    if (token.length === 0) {
+    const token = await db.query.authTokensTable.findMany({
+      where: eq(schema.authTokensTable.session_token, sessionToken),
+    });
+
+    if (!token) {
       return false;
     }
 
@@ -90,7 +90,7 @@ export async function validateSession(sessionToken: string) {
       return false;
     }
 
-    return true;
+    return token[0];
   } catch (error) {
     // JWT verification failed
     return false;
@@ -99,17 +99,10 @@ export async function validateSession(sessionToken: string) {
 
 export function getUserDataBySession(session: string) {
   return db
-    .select()
-    .from(schema.usersTable)
-    .where(
-      eq(
-        schema.usersTable.id,
-        db
-          .select()
-          .from(schema.authTokensTable)
-          .where(eq(schema.authTokensTable.session_token, session))
-      )
-    );
+  .select()
+  .from(schema.authTokensTable)
+  .where(eq(schema.authTokensTable.session_token, session))
+  .then(console.log).then(console.log);
 }
 
 export default db;

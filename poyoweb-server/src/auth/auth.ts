@@ -62,15 +62,20 @@ const router = new Elysia()
       }),
     })
   }).post("/verifyJwt/", async ({ body: { jwt_token } }: { body: { jwt_token: string }}) => {
+    try {
     const decoded = await jwt.verify(jwt_token, process.env.JWT_SECRET!) as { sid: string };
     if (decoded) {
-      const session = await validateSession(await decoded.sid);
+      const session = await validateSession(decoded.sid);
       if (session) {
-        return { success: true, decoded: await getUserDataBySession(decoded.sid) };
+        return { success: true, decoded: session };
       } else {
         return { success: false };
       }
     } else {
+      return { success: false };
+    }
+    } catch (e) {
+      console.error(e);
       return { success: false };
     }
   },

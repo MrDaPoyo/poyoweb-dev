@@ -21,5 +21,5 @@ export async function requireAuth(cookies: any): Promise<DecodedUser | null> {
 
     if (!data.success || !data.decoded) return null;
 
-    return data.decoded;
+    return data.decoded as DecodedUser;
 }
