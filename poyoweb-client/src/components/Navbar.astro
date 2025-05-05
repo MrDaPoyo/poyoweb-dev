@@ -1,0 +1,13 @@
+---
+const data = Astro.locals;
+---
+
+<nav class="navbar">
+    <div class="logo">
+        <a href="/">PoyoWeb</a>
+    </div>
+    <div class="menu">
+        <a href="/">Home</a>
+        {!data.logged_in && <a href="/auth">Authenticate</a>}
+    </div>
+</nav>
