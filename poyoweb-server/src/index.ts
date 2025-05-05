@@ -6,7 +6,7 @@ import AuthRouter from "./auth/auth";
 
 const app = new Elysia()
   .use(cors({
-    origin: ['http://localhost:5173', 'http://localhost'], // Allow SvelteKit frontend
+    origin: ['http://localhost:5173', 'http://localhost', 'http://localhost:3000', 'http://localhost:8080'], 
     methods: ['GET', 'POST', 'PUT', 'UPDATE', 'DELETE'], // Allowed methods
   }))
   .use(ip())

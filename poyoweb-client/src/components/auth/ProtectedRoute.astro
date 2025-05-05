@@ -1,0 +1,33 @@
+<script>
+	document.addEventListener("DOMContentLoaded", async () => {
+		const jwtToken = localStorage.getItem("jwt");
+
+		if (!jwtToken) {
+			window.location.href = "/auth";
+			return;
+		}
+
+		try {
+			const response = await fetch(
+				"http://localhost:3000/auth/verifyJwt",
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ jwt_token: jwtToken }),
+				}
+			);
+
+			const result = await response.json();
+
+			if (!result.success) {
+				localStorage.removeItem("jwt");
+				window.location.href = "/auth";
+			}
+		} catch (error) {
+			localStorage.removeItem("jwt");
+			window.location.href = "/auth";
+		}
+	});
+</script>
+
+<slot />

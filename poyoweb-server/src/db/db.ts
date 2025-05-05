@@ -105,4 +105,12 @@ export function getUserDataBySession(session: string) {
   .then(console.log).then(console.log);
 }
 
+export async function deleteSession(sessionToken: string) {
+  const token = await db
+    .delete(schema.authTokensTable)
+    .where(eq(schema.authTokensTable.session_token, sessionToken));
+  return token;
+}
+
+
 export default db;

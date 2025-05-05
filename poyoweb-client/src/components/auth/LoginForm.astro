@@ -1,0 +1,49 @@
+---
+// src/components/LoginForm.astro
+---
+
+<form id="loginForm" class="auth-form">
+	<div class="form-group">
+		<label for="email">Email</label>
+		<input type="email" id="email" required />
+	</div>
+
+	<div class="form-group">
+		<label for="password">Password</label>
+		<input type="password" id="password" required />
+	</div>
+
+	<button type="submit">Sign In</button>
+	<div id="errorMessage" class="error-message"></div>
+</form>
+
+<script>
+	import { login } from "../../actions/index.ts"
+
+	document
+		.getElementById("loginForm")
+		.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			// Clear previous error message
+			const errorElement = document.getElementById("errorMessage");
+			if (errorElement) errorElement.textContent = "";
+			setTimeout(() => {
+			}, 1000);
+
+			const email = document.getElementById("email").value;
+			const password = document.getElementById("password").value;
+
+			try {
+				const result = await login(email, password);
+
+				if (result.success) {
+					document.cookie = `auth_token=${result.jwt_token}; path=/; SameSite=Lax`;
+					window.location.href = "/dashboard";
+				} else {
+					errorElement.textContent = result.error || "Login failed";
+				}
+			} catch (error) {
+				errorElement.textContent = "An unexpected error occurred";
+			}
+		});
+</script>

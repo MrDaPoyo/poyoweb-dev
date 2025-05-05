@@ -1,3 +1,15 @@
 ---
-const logged_in = Astro.locals.session?.user !== undefined;
+import LoginForm from "./auth/LoginForm.astro";
+import RegisterForm from "./auth/RegisterForm.astro";
 ---
+
+<div class="auth-container">
+    <div class="auth-form-container">
+        <h2>Login</h2>
+        <LoginForm />
+    </div>
+    <div class="auth-form-container">
+        <h2>Register</h2>
+        <RegisterForm />
+    </div>
+</div>
