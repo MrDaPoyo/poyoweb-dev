@@ -1,7 +1,3 @@
----
-// src/components/LoginForm.astro
----
-
 <form id="loginForm" class="auth-form">
 	<div class="form-group">
 		<label for="email">Email</label>
@@ -37,7 +33,7 @@
 				const result = await login(email, password);
 
 				if (result.success) {
-					document.cookie = `auth_token=${result.jwt_token}; path=/; SameSite=Lax`;
+					document.cookie = `auth_session=${result.jwt_token}; path=/; SameSite=Lax`;
 					window.location.href = "/dashboard";
 				} else {
 					errorElement.textContent = result.error || "Login failed";

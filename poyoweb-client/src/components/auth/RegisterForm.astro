@@ -35,7 +35,7 @@
 				const result = await register(email, password, username);
 
 				if (result.success) {
-					document.cookie = `auth_token=${result.jwt_token}; path=/; SameSite=Lax`;
+					document.cookie = `auth_session=${result.jwt_token}; path=/; SameSite=Lax`;
 					window.location.href = "/dashboard";
 				} else {
 					errorElement.textContent =
